@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Greeting</title>
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <style>
+            *{
+                border:0;
+                padding:0;
+                margin:0;
+            }
+            .wrap {
+                width:100%;
+                height:100%;
+            }
+            .calculator{
+                position:fixed;
+                top:50%;
+                left:50%;
+                background: #CCC;
+                transform:translate(-50%,-50%);
+            }
+            .calculator-wrap{
+                display:flex;
+                flex-direction:column;
+            }
+            .calculator-row{
+                flex:1;
+                display:flex;
+                flex-direction:row;
+                padding:5px;
+                font-size:1.4em;
+            }
+            /* The container */
+            .container {
+                flex:1;
+                display: block;
+                position: relative;
+                padding:20px 0px;
+                cursor: pointer;
+                text-align:center;
+                font-size: 22px;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            /* Hide the browser's default radio button */
+            .container input {
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            /* Create a custom radio button */
+            .checkmark {
+                position: absolute;
+                left:50%;
+                top:50%;
+                transform:translate(-50%,0%);
+                height: 25px;
+                width: 25px;
+                background-color: #eee;
+                border-radius: 50%;
+            }
+
+            /* On mouse-over, add a grey background color */
+            .container:hover input ~ .checkmark {
+                background-color: #ccc;
+            }
+
+            /* When the radio button is checked, add a blue background */
+            .container input:checked ~ .checkmark {
+                background-color: #2196F3;
+            }
+
+            /* Create the indicator (the dot/circle - hidden when not checked) */
+            .checkmark:after {
+                content: "";
+                position: absolute;
+                display: none;
+            }
+
+            /* Show the indicator (dot/circle) when checked */
+            .container input:checked ~ .checkmark:after {
+                display: block;
+            }
+
+            /* Style the indicator (dot/circle) */
+            .container .checkmark:after {
+                top: 9px;
+                left: 9px;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: white;
+            }
+
+            .calNumInput {
+                border:1px;
+                background:#EEE;
+                font-size:24px;
+            }
+            .calculator-btn {
+                width:100%;
+                padding:5px;
+                font-size:1.2em;
+            }
+
+            #calRequest {
+                background:#F39621;
+                color:#000;
+            }
+            #calPath {
+                background:#9621F3;
+                color:#FFF;
+            }
+            .modeSelect {
+                display:flex;
+                flex-direction:column;
+                width:50%;
+                margin:auto;
+                text-align:center;
+            }
+            .mode {
+                float:1;
+                padding:16px 6px;
+                font-size:1.4em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="modeSelect">
+                <h1>Calculator, Best Simple of the World</h1>
+                <button class="mode" onclick="changeToRequest();">@RequestParam Mode</button>
+                <button class="mode" onclick="changeToPath();">@PathVariable Mode</button>
+                <p>버튼을 통해서 GET의 다양한 기능을 체험해 볼 수 있습니다!</p>
+            </div>
+
+            <div class="calculator" id="calRequest">
+                <form method="GET" action="/calRequest">
+                    <div class="calculator-wrap">
+                        <div class="calculator-row">RequestParam Mode</div>
+                        <div class="calculator-row">
+                            <input type="number" name="A" class="calNumInput" placeholder="Number A">
+                        </div>
+                        <div class="calculator-row">
+                            <label class="container">
+                                <input type="radio" name="type" value="1" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                                <input type="radio" name="type" value="2">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                                <input type="radio" name="type" value="3">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                                <input type="radio" name="type" value="4">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="calculator-row">
+                            <label class="container">＋</label>
+                            <label class="container">－</label>
+                            <label class="container">×</label>
+                            <label class="container">÷</label>
+                        </div>
+                        <div class="calculator-row">
+                            <input type="number" name="B" class="calNumInput" placeholder="Number B">
+                        </div>
+                        <div class="calculator-row">
+                            <button class="calculator-btn">연산</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="calculator" id="calPath">
+                <div class="calculator-wrap">
+                    <div class="calculator-row">PathVariable Mode</div>
+                    <div class="calculator-row">
+                        <input type="number" id="A" class="calNumInput" placeholder="Number A">
+                    </div>
+                    <div class="calculator-row">
+                        <label class="container">
+                            <input type="radio" name="typeP" value="1" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="container">
+                            <input type="radio" name="typeP" value="2">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="container">
+                            <input type="radio" name="typeP" value="3">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="container">
+                            <input type="radio" name="typeP" value="4">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                    <div class="calculator-row">
+                        <label class="container">＋</label>
+                        <label class="container">－</label>
+                        <label class="container">×</label>
+                        <label class="container">÷</label>
+                    </div>
+                    <div class="calculator-row">
+                        <input type="number" id="B" class="calNumInput" placeholder="Number B">
+                    </div>
+                    <div class="calculator-row">
+                        <button class="calculator-btn" onclick="calActive();">연산</button>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function calActive() {
+                    let a = $("#A").val();
+                    let b = $("#B").val();
+                    let type = $("input[name='typeP']:checked").val();
+                    location.href = "calPath/" + a + '/' + b + '/' + type;
+                }
+
+                function changeToPath() {
+                    $("#calRequest").hide();
+                    $("#calPath").show()
+                }
+                function changeToRequest() {
+                    $("#calPath").hide();
+                    $("#calRequest").show();
+                }
+
+                changeToRequest();
+            </script>
+        </div>
+    </body>
+</html>
