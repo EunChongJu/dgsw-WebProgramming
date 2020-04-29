@@ -19,7 +19,7 @@ public class CalculatorServicelmpl implements CalculatorService {
                 result = a * b;
                 break;
             case 4:
-                result = a / b;
+                if (b != 0) result = a / b;
                 break;
         }
 
