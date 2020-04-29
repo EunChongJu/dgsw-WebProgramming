@@ -133,54 +133,7 @@
     </head>
     <body>
         <div class="wrap">
-            <div class="modeSelect">
-                <h1>Calculator, Best Simple of the World</h1>
-                <button class="mode" onclick="changeToRequest();">@RequestParam Mode</button>
-                <button class="mode" onclick="changeToPath();">@PathVariable Mode</button>
-                <p>버튼을 통해서 GET의 다양한 기능을 체험해 볼 수 있습니다!</p>
-            </div>
 
-            <div class="calculator" id="calRequest">
-                <form method="GET" action="/calRequest">
-                    <div class="calculator-wrap">
-                        <div class="calculator-row">RequestParam Mode</div>
-                        <div class="calculator-row">
-                            <input type="number" name="A" class="calNumInput" placeholder="Number A">
-                        </div>
-                        <div class="calculator-row">
-                            <label class="container">
-                                <input type="radio" name="type" value="1" checked>
-                                <span class="checkmark"></span>
-                            </label>
-                            <label class="container">
-                                <input type="radio" name="type" value="2">
-                                <span class="checkmark"></span>
-                            </label>
-                            <label class="container">
-                                <input type="radio" name="type" value="3">
-                                <span class="checkmark"></span>
-                            </label>
-                            <label class="container">
-                                <input type="radio" name="type" value="4">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="calculator-row">
-                            <label class="container">＋</label>
-                            <label class="container">－</label>
-                            <label class="container">×</label>
-                            <label class="container">÷</label>
-                        </div>
-                        <div class="calculator-row">
-                            <input type="number" name="B" class="calNumInput" placeholder="Number B">
-                        </div>
-                        <div class="calculator-row">
-                            <button class="calculator-btn">연산</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            
             <div class="calculator" id="calPath">
                 <div class="calculator-wrap">
                     <div class="calculator-row">PathVariable Mode</div>
@@ -217,30 +170,22 @@
                     <div class="calculator-row">
                         <button class="calculator-btn" onclick="calActive();">연산</button>
                     </div>
+                    <div class="calculator-row">
+                        <div id="response">Result: </div>
+                    </div>
                 </div>
             </div>
             <script>
-                function calActive() {
-                    let a = $("#A").val();
-                    let b = $("#B").val();
+                async function calActive() {
+                    let a = $("#A").val().trim();
+                    let b = $("#B").val().trim();
                     let type = $("input[name='typeP']:checked").val();
-                    location.href = "calPath/" + a + '/' + b + '/' + type;
+                    // location.href = "calPath/" + a + '/' + b + '/' + type;
+
+                    let response = await $.get("/calculator/" + a + "/" + b + "/" + type);
+                    $('#response').html(JSON.stringify(response));
                 }
 
-                function changeToPath() {
-                    $("#calRequest").hide();
-                    $("#calPath").show()
-                }
-                function changeToRequest() {
-                    $("#calPath").hide();
-                    $("#calRequest").show();
-                }
-
-                changeToRequest();
-
-                $(document).ready(function(){
-                    location.href = "./calc.html";
-                });
             </script>
         </div>
     </body>
