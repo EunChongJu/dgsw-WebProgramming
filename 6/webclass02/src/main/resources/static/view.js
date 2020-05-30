@@ -100,49 +100,6 @@ function cancelUpdateComment(id) {
     $('#comment-'+ id +'-text').val('');
 }
 
-
-
-/*
-
-*** UserInfo
-
-@PostMapping("/user/add")
-public User add(@RequestBody User user) {
-    return userService.add(user);
-}
-
-@PostMapping("/user/login")
-public User login(@RequestBody User user) {
-    return userService.login(user.getEmail(), user.getPassword());
-}
-
-@PutMapping("/user/update/{id}")
-public User update(@PathVariable Long id, @RequestBody User user) {
-    return userService.update(id, user);
-}
-
-@DeleteMapping("/user/delete/{id}")
-public boolean delete(@PathVariable Long id) {
-    return userService.delete(id);
-}
-
-@GetMapping("/user/view/{id}")
-public User view(@PathVariable Long id) {
-    return userService.view(id);
-}
-
-@GetMapping("/user/list")
-public List<User> list() {
-    return userService.list();
-}
-
-*/
-
-
-
-
-////// UserController.java와 연계된 (사실은 정경유착인) 정보 처리 함수
-
 //// 여기는 회원가입 = 회원 추가    // POST     // 전체 완료
 
 // 회원가입에서 확인을 누르면 동작하는 함수 - 회원가입 전체를 맡는 함수
@@ -305,16 +262,12 @@ async function requestUserInfoList() {
 
 // 리스트를 html에 보여줌
 function showUserInfoList(list) {
-    // console.log(list);
     var code = '<table id="user-list-table">';
     var idArr = [];
 
     for (var i = 0; i < list.length; i++) {
         var info = list[i];
         var id = info.id;
-
-        // console.log('info::');
-        // console.dir(info);
 
         code += '<tr id="user-'+id+'">';
 
@@ -326,7 +279,7 @@ function showUserInfoList(list) {
         code += '<div id="user-'+ id +'-form">';
         code += '<form method="POST" action="/attachment" enctype="multipart/form-data" id="user-'+ id +'-form" onsubmit="return false;">';
         code += '<input type="file" name="srcFile" id="user-'+ id +'-fileUpload" accept="image/jpeg, image/png, image/gif" multiple="true">';
-        // code += '<button id="user-'+ id +'-upload" type="submit">파일 업로드</button></form></div></td>';
+
         code += '<button id="user-'+ id +'-upload" onclick="userFileUpload('+ id +');">파일 업로드</button></form></div></td>';
         code += '<td><p id="user-'+ id +'-path">'+ info.storedPath +'</p></td>';
 
@@ -398,52 +351,12 @@ function fileSetUp(res) {   // 파일 셋업, 반환값을 바탕으로 업데�
     return true;
 }
 
-
-
-
-
-
-
-
 /*
 //// 로그인     (이건 나중에 구현된다고 하니 생략한다)
 function loginActive() {
 
 }
 */
-
-/*
-
-*** Comment
-
-@PostMapping("/comment/add")
-add(@RequestBody Comment comment) {
-    return commentService.add(comment);
-}
-
-@PutMapping("/comment/update/{id}")
-public CommentUsernameProtocol update(@PathVariable Long id, @RequestBody Comment comment) {
-    return commentService.update(id, comment);
-}
-
-@DeleteMapping("/comment/remove/{id}")
-public boolean remove(@PathVariable Long id) {
-    return commentService.remove(id);
-}
-
-@GetMapping("/comment/view/{id}")
-public CommentUsernameProtocol view(@PathVariable Long id) {
-    return commentService.view(id);
-}
-
-@GetMapping("/comment/list")
-public List<CommentUsernameProtocol> listAllComments() {
-    return commentService.listAllComments();
-}
-
-*/
-
-////// UserController.java와 연계된 (사실은 정경유착인) 정보 처리 함수
 
 //// 댓글 추가  // POST     // 전체 완료
 
@@ -611,86 +524,3 @@ $(document).ready(function() {
     viewListUserInfo(); // 리스트를 호출하여 보여준다.
     viewListComments();
 });
-
-
-///// 이거는 쌤으로부터 온 코드임. 로컬라이징화 하여 적용하시길 바란다
-
-// 이거는 회원가입
-
-/*
-// GET - AJAX
-$.ajax({
-    url: "/rest/1/pages/245", // 클라이언트가 HTTP 요청을 보낼 서버의 URL 주소
-    data: { name: "홍길동" },  // HTTP 요청과 함께 서버로 보낼 데이터
-    method: "GET",   // HTTP 요청 메소드(GET, POST 등)
-    dataType: "json" // 서버에서 보내줄 데이터의 타입
-})
-// HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
-.done(function(json) {
-    $("<h1>").text(json.title).appendTo("body");
-    $("<div class=\"content\">").html(json.html).appendTo("body");
-})
-// HTTP 요청이 실패하면 오류와 상태에 관한 정보가 fail() 메소드로 전달됨.
-.fail(function(xhr, status, errorThrown) {
-    $("#text").html("오류가 발생했다.<br>")
-    .append("오류명: " + errorThrown + "<br>")
-    .append("상태: " + status);
-})
-// 
-.always(function(xhr, status) {
-    $("#text").html("요청이 완료되었습니다!");
-});
-
-*/
-
-/*
-var jqxhr = $.ajax("/rest/1/pages/245")
-.done(function() {
-  alert("성공");
-})
-.fail(function() {
-  alert("실패");
- })
-.always(function() {
-  alert("완료");
-});
-      
-jqxhr.always(function() {
-  alert("두번째 성공");
-});
-*/
-
-
-
-
-/*
-// 회원리스트를 정보들을 html코드로 변환하여 웹에서 보기 편한 방식으로 변경
-function setCommentListTable(arr) {
-    var list = arr;  // 반환값으로 {}가 여러개인 배열 형태로 보인다고 가정한다.
-    var htmlCode = "<table id='user-list-table'>"
-
-    for (info of list) {
-        // let username = info.username;
-        // let email = info.email;
-        // let password = info.password;
-        // let storedPath = info.storedPath;
-        htmlCode += "<tr>";
-        // htmlCode += "<td>" + info.id + "</td>";
-        htmlCode += "<td>" + info.userId + "</td>";
-        htmlCode += "<td>" + info.content + "</td>";
-        htmlCode += "<td>" + info.created + "</td>";
-        htmlCode += "<td><button>수정</button><button>삭제</button></td>"
-        htmlCode += "</tr>";
-    }
-
-    htmlCode += "</table>";
-    return htmlCode;
-}
-
-// 위에서 html로 변환한 코드를 html에 이식
-function setCommentList() {
-    var code = setUserListTable(arr);
-    var tableFrame = document.getElementById('user-list');
-    tableFrame.innerHTML = code;
-}
-*/
