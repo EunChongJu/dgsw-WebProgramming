@@ -23,7 +23,6 @@ import kr.hs.dgsw.webclass02.Domain.User;
 import kr.hs.dgsw.webclass02.Protocol.AttachmentProtocol;
 import kr.hs.dgsw.webclass02.Repository.CommentRepository;
 import kr.hs.dgsw.webclass02.Repository.UserRepository;
-import kr.hs.dgsw.webclass02.Service.UserServiceImpl;
 
 @RestController
 public class AttachmentController {

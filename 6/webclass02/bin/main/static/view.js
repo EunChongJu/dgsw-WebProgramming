@@ -1,4 +1,23 @@
 
+//// 값 관리
+var FileValues = function() {
+    this.storedPath;
+    this.originalName;
+
+    this.setValues = function(storedPath, originalName) {
+        this.storedPath = storedPath;
+        this.originalName = originalName;
+    };
+
+    this.getValues = function() {
+        return {
+            storedPath: this.storedPath,
+            originalName: this.originalName
+        };
+    };
+}
+
+var fileValues = new FileValues();
 
 //// 디스플레이 관리
 
@@ -177,12 +196,13 @@ function updateModeUserInfo(id) {
 }
 
 function getUpdateUserInfo(id) {
+    var fv = fileValues.getValues();
     return {
         username: $('#user-'+ id +'-id').val(),
         email: $('#user-'+ id +'-editEmail').val(),
         password: $('#user-'+ id +'-editPassword').val(),
-        storedPath: $('#user-'+ id +'-path').val(),
-        originalName: $('#user-'+ id +'-file').val()
+        storedPath: fv.storedPath,
+        originalName: fv.originalName
     }
 }
 
@@ -207,7 +227,6 @@ async function requestUserInfoUpdate(data, id) {
             data: JSON.stringify(data),
             success: ()=>{
                 alert(data.id +'님 정보 업데이트가 완료되었습니다.');
-
                 resetUserInfo();
                 emptyEditUserInfo(id);
             }
@@ -221,6 +240,7 @@ async function requestUserInfoUpdate(data, id) {
 function emptyEditUserInfo(id) {
     $('#user-'+ id +'-editEmail').val('');    // input을 비운다
     $('#user-'+ id +'-editPassword').val('');
+    $('#user-'+ id +'-fileUpload').val('');
     // $('#user-'+ id +'-').val('');
 }
 
@@ -261,7 +281,6 @@ function deleteRowUserInfo() {    // 아이디는 숫자다.
 
 // 리스트를 종합적으로 관리하는 함수
 function viewListUserInfo() {
-    console.log('active view list userInfo!');
     requestUserInfoList();
 }
 
@@ -305,15 +324,13 @@ function showUserInfoList(list) {
 
         code += '<td><p id="user-'+ id +'-file">'+ info.originalName +'</p>';
         code += '<div id="user-'+ id +'-form">';
-        code += '<form method="POST" action="/attachment" enctype="multipart/form-data" id="user-'+ id +'-form">';
-        code += '<input type="file" name="srcFile" id="user-'+ id +'-fileUpload" accept="image/jpeg, image/png, image/gif">';
-        code += '<button id="user-'+ id +'-upload" type="submit">파일 업로드</button></form></div></td>';
-        // code += '<button id="user-'+ id +'-upload" onclick="userFileUpload('+ id +');">파일 업로드</button></form></div></td>';
+        code += '<form method="POST" action="/attachment" enctype="multipart/form-data" id="user-'+ id +'-form" onsubmit="return false;">';
+        code += '<input type="file" name="srcFile" id="user-'+ id +'-fileUpload" accept="image/jpeg, image/png, image/gif" multiple="true">';
+        // code += '<button id="user-'+ id +'-upload" type="submit">파일 업로드</button></form></div></td>';
+        code += '<button id="user-'+ id +'-upload" onclick="userFileUpload('+ id +');">파일 업로드</button></form></div></td>';
         code += '<td><p id="user-'+ id +'-path">'+ info.storedPath +'</p></td>';
 
-        code += '<td>';
-        // code += '<td><button id="user-'+ id +'-upload" onclick="userFileUpload('+ id +');">파일 업로드</button>';
-        code += '<button id="user-'+ id +'-update" onclick="updateUserInfo('+ id +');">수정</button>';
+        code += '<td><button id="user-'+ id +'-update" onclick="updateUserInfo('+ id +');">수정</button>';
         code += '<button id="user-'+ id +'-cancel" onclick="cancelUpdateUserInfo('+ id +');">취소</button>';
         code += '<button id="user-'+ id +'-edit" onclick="updateModeUserInfo('+ id +');">수정하기</button>';
         code += '<button id="user-'+ id +'-remove" onclick="deleteUserInfo('+ id +');">삭제</button>';
@@ -339,74 +356,47 @@ function showUserInfoList(list) {
 // 무언가가 파일을 읽고 이를 uploadImageFile() 함수의 파라미터 양식에 맞는 data를 생성하여 반환해야 한다.
 
 function userFileUpload(id) {
-    data = new FormData($('#user-'+ id +'-form'));
+    // var file = $('#user-'+ id +'-fileUpload');
+    // console.dir(file);
 
-    console.dir(data);
+    var form = $('#user-'+ id +'-form');
+    // var form = '#user-'+ id +'-form';
+    console.dir(form);
 
-    uploadImageFile(data);
+    var formData = new FormData();
+    // var formData = new FormData(document.getElementById(form));
+    // formData.append('srcFile', file[0]);
+    formData.append('srcFile', $('#user-'+ id +'-fileUpload')[0].files[0]);
+
+    console.dir(formData);
+
+    uploadImageFile(formData);
 }
 
-async function uploadImageFile(data) {
+function uploadImageFile(data) {
     $.ajax({
-        url: "/attachment", //컨트롤러 URL
+        url: "/attachment",
         data: data,
         enctype: 'miltipart/form-data',
         processData: false,
         contentType: false,
         type: 'POST',
-        success: function (response) {
-            alert("success");
-            console.log(response);
+        success: function (res) {
+            if (fileSetUp(res)) {
+                alert("업로드 완료되었습니다!");
+                console.log(res);
+            }
         },
         error: function (e) {
             alert(e.responseText);
         }
     });
-
-    /*
-    $.ajax({
-        type: 'POST',
-        url: '/attachment',
-        data: data,
-        enctype: 'multipart/form-data',
-        processData: false,
-        contentType: false,
-        success: function(data, jqXHR, textStatus) {
-            alert('업로드에 성공하였습니다!');
-            console.dir(data);
-            console.dir(jqXHR);
-            console.dir(textStatus);
-            viewListUserInfo();
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-
-        }
-    });
-    */
-
-    /*
-    try {
-        let response = await $.ajax({
-            type: 'POST',
-            url: '/attachment',
-            data: data,
-            contentType: 'application/json',    // or contentType: false,
-            //processData: false,
-            success: () => {
-                alert('파일 업로드 완료!');
-                // add
-                viewListUserInfo();
-            }
-        });
-    }
-    catch (error) {
-        console.log(JSON.stringify(error));
-        alert('파일 업로딩에 실패하였습니다.');
-        return false;
-    }
-    */
 }
 
+function fileSetUp(res) {   // 파일 셋업, 반환값을 바탕으로 업데이트에 반영될 수 있도록 처리한다.
+    fileValues.setValues(res.storedPath, res.originalName); // res.storedPath, res.originalName
+    return true;
+}
 
 
 
@@ -562,7 +552,6 @@ async function requestCommentDelete(id) {
 
 // 댓글 리스트 전체보기를 종합적으로 관리하는 함수이다.
 function viewListComments() {
-    console.log('댓글 리스트 실행');
     requestCommentList();
 }
 
